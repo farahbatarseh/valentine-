@@ -30,7 +30,6 @@
       touch-action: manipulation;
     }
 
-    /* Shared */
     .hearts{
       position:fixed; inset:0; pointer-events:none; opacity:.18;
       background-image:
@@ -40,6 +39,7 @@
         radial-gradient(circle at 40% 75%, #fff 0 2px, transparent 3px);
       filter: blur(.2px);
     }
+
     .screen{
       position:fixed; inset:0;
       display:none;
@@ -58,6 +58,7 @@
       box-shadow:var(--shadow);
       position:relative;
     }
+
     .title{
       font-size:clamp(22px, 4.2vw, 44px);
       line-height:1.05;
@@ -66,8 +67,15 @@
     .subtitle{
       margin:10px 0 0;
       font-size:clamp(13px, 2.2vw, 18px);
-      opacity:.85;
+      opacity:.88;
     }
+    .subtitle .tease{
+      display:inline-block;
+      margin-top:6px;
+      font-weight:900;
+      opacity:.95;
+    }
+
     .badge{
       padding:10px 14px;
       background:#fff;
@@ -100,23 +108,40 @@
       box-shadow: 0 18px 45px rgba(0,0,0,.18);
       padding:10px 14px;
       border-radius:14px;
-      font-weight:800;
-      max-width:min(92vw, 520px);
+      font-weight:900;
+      max-width:min(92vw, 560px);
       text-align:center;
       opacity:0;
       pointer-events:none;
       transition: opacity .18s ease, transform .18s ease;
-      z-index:80;
+      z-index:120;
     }
     .toast.show{
       opacity:1;
       transform:translateX(-50%) translateY(-6px);
     }
 
-    /* ====== GAME SCREEN ====== */
-    #gameCard{
-      overflow:hidden;
+    /* Buttons (shared) */
+    .btn{
+      border:none;
+      padding:12px 14px;
+      border-radius:14px;
+      font-size:15px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow: 0 12px 26px rgba(0,0,0,.16);
+      user-select:none;
+      touch-action: manipulation;
     }
+    .btnDark{ background:#111; color:#fff; }
+    .btnLight{ background:#fff; color:#111; border:1px solid #00000014; }
+    .btnGreen{
+      background: linear-gradient(180deg, #2de7a0, #23c483);
+      color:#083a26;
+    }
+
+    /* ====== GAME SCREEN ====== */
+    #gameCard{ overflow:hidden; }
     .gameArea{
       margin-top:14px;
       height:min(520px, 62vh);
@@ -142,21 +167,7 @@
       opacity:.85;
       font-size:13px;
     }
-    .btn{
-      border:none;
-      padding:12px 14px;
-      border-radius:14px;
-      font-size:15px;
-      font-weight:900;
-      cursor:pointer;
-      box-shadow: 0 12px 26px rgba(0,0,0,.16);
-      user-select:none;
-      touch-action: manipulation;
-    }
-    .btnDark{ background:#111; color:#fff; }
-    .btnLight{ background:#fff; color:#111; border:1px solid #00000014; }
 
-    /* Bird (tap target) */
     .bird{
       position:absolute;
       width:78px;
@@ -166,7 +177,7 @@
       font-size:40px;
       filter: drop-shadow(0 14px 20px rgba(0,0,0,.18));
       user-select:none;
-      transform: translate(-9999px, -9999px); /* offscreen until start */
+      transform: translate(-9999px, -9999px);
       cursor:pointer;
       touch-action: manipulation;
     }
@@ -182,7 +193,6 @@
       font-weight:900;
       opacity:.9;
     }
-
     .progressBarWrap{
       height:12px;
       border-radius:999px;
@@ -212,10 +222,7 @@
       touch-action: manipulation;
     }
 
-    .stickers{
-      position:absolute; inset:0;
-      pointer-events:none;
-    }
+    .stickers{ position:absolute; inset:0; pointer-events:none; }
     .sticker{
       position:absolute;
       width:110px;
@@ -230,7 +237,8 @@
       transform: scale(1) rotate(var(--rot, 0deg));
     }
 
-    button{
+    /* Prank buttons */
+    .prankBtn{
       border:none;
       padding:16px 22px;
       border-radius:18px;
@@ -242,12 +250,12 @@
       user-select:none;
       touch-action: manipulation;
     }
-    button:active{transform: scale(.98)}
+    .prankBtn:active{transform: scale(.98)}
+
     #yesBtn{
-      background: linear-gradient(180deg, #2de7a0, var(--yes));
+      background: linear-gradient(180deg, #2de7a0, #23c483);
       color:#083a26;
       min-width:210px;
-
       position:absolute;
       left:50%;
       top:78%;
@@ -255,10 +263,9 @@
       z-index:3;
     }
     #noBtn{
-      background: linear-gradient(180deg, #ff7a92, var(--no));
+      background: linear-gradient(180deg, #ff7a92, #ff4d6d);
       color:#3b0610;
       min-width:180px;
-
       position:absolute;
       left:56%;
       top:56%;
@@ -294,7 +301,7 @@
       align-items:center;
       justify-content:center;
       padding:18px;
-      z-index:90;
+      z-index:200;
     }
     .modal.show{display:flex}
     .modalCard{
@@ -323,17 +330,12 @@
       flex-wrap:wrap;
       justify-content:flex-end;
     }
-    .secondary{
-      background:#111;
-      color:#fff;
-      box-shadow: 0 12px 26px rgba(0,0,0,.20);
-    }
 
     /* Confetti */
     #confetti{
       position:fixed; inset:0;
       pointer-events:none;
-      z-index:95;
+      z-index:210;
     }
   </style>
 </head>
@@ -349,7 +351,9 @@
       <div class="rowTop">
         <div>
           <h1 class="title">Mini game for Katia 💘</h1>
-          <p class="subtitle">Tap the flying bird 🐦 to “catch love points”. Reach <b>5</b> hits to unlock the Valentine question 😈</p>
+          <p class="subtitle">
+            Tap the flying bird 🐦 to “catch love points”. Reach <b>5</b> hits to unlock the Valentine question 😈
+          </p>
         </div>
         <div class="badge">🎯 Hits: <span id="hits">0</span>/5</div>
       </div>
@@ -378,15 +382,18 @@
       <div class="rowTop">
         <div>
           <h1 class="title">Katia (Katkooteh)… 💘<br>Will you be my Valentine?</h1>
-          <p class="subtitle">From <b>Farah</b> — choose wisely. (Your “No” has legs today.)</p>
+          <p class="subtitle">
+            From <b>Farah</b> — choose wisely. (Your “No” has legs today.)<br>
+            <span class="tease">😈 If you can press NO then there is an extra game…</span>
+          </p>
         </div>
         <div class="badge" title="Chase counter">🏃‍♀️💨 No-chases: <span id="chaseCount">0</span></div>
       </div>
 
       <div class="arena" id="arena">
         <div class="stickers" id="stickers"></div>
-        <button id="yesBtn">YES 💍💖</button>
-        <button id="noBtn">No 🙅‍♀️</button>
+        <button class="prankBtn" id="yesBtn">YES 💍💖</button>
+        <button class="prankBtn" id="noBtn">No 🙅‍♀️</button>
       </div>
 
       <div class="status">
@@ -405,7 +412,8 @@
       <p id="finalNote"></p>
       <div class="kiss">😘💞🥰</div>
       <div class="closeRow">
-        <button class="secondary" id="closeBtn">Close</button>
+        <button class="btn btnGreen" id="shareBtn">Share / Copy link</button>
+        <button class="btn btnDark" id="closeBtn">Close</button>
       </div>
     </div>
   </div>
@@ -435,6 +443,49 @@
   function rand(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
   function dist(x1,y1,x2,y2){ return Math.hypot(x1-x2, y1-y2); }
 
+  // ========= Sound (Web Audio, iPhone-safe after user gesture) =========
+  let audioCtx = null;
+  function ensureAudio(){
+    if (!audioCtx){
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      audioCtx = Ctx ? new Ctx() : null;
+    }
+    // iOS sometimes starts suspended
+    if (audioCtx && audioCtx.state === "suspended"){
+      audioCtx.resume().catch(()=>{});
+    }
+  }
+  function beep({freq=660, dur=0.07, type="sine", gain=0.06} = {}){
+    if (!audioCtx) return;
+    const t0 = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t0);
+
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+
+    osc.connect(g);
+    g.connect(audioCtx.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.02);
+  }
+  function sfxHit(){
+    beep({freq: 880, dur: 0.06, type:"triangle", gain:0.08});
+    setTimeout(()=>beep({freq: 660, dur: 0.06, type:"triangle", gain:0.07}), 60);
+  }
+  function sfxNo(){
+    beep({freq: 240, dur: 0.08, type:"square", gain:0.05});
+    setTimeout(()=>beep({freq: 180, dur: 0.09, type:"square", gain:0.05}), 70);
+  }
+  function sfxYes(){
+    beep({freq: 660, dur: 0.07, type:"sine", gain:0.07});
+    setTimeout(()=>beep({freq: 880, dur: 0.09, type:"sine", gain:0.08}), 70);
+    setTimeout(()=>beep({freq: 990, dur: 0.11, type:"sine", gain:0.08}), 150);
+  }
+
   // ========= STAGE 1: Tap bird mini game (mobile friendly) =========
   const gameArea = document.getElementById("gameArea");
   const bird = document.getElementById("bird");
@@ -459,7 +510,6 @@
   let gameRunning = false;
   let raf = null;
 
-  // Bird motion state
   const birdState = {
     x: 0, y: 0,
     vx: 2.2, vy: 1.2,
@@ -469,20 +519,19 @@
 
   function placeBirdInitial(){
     const r = gameArea.getBoundingClientRect();
-    const w = 78, h = 56;
     birdState.x = Math.max(10, r.width * 0.15);
     birdState.y = Math.max(10, r.height * 0.35);
     bird.style.transform = `translate(${birdState.x}px, ${birdState.y}px)`;
   }
 
   function startGame(){
+    ensureAudio();
     hits = 0;
     hitsEl.textContent = String(hits);
     progressBar.style.width = "0%";
     birdBubble.textContent = "tap me";
     showToast("🐦 Ready? Tap the bird!", 1000);
 
-    // Speed tuned to feel good on phones
     birdState.vx = 2.4;
     birdState.vy = 1.3;
     birdState.wobble = 0;
@@ -496,6 +545,7 @@
   }
 
   function endGameAndGoToPrank(){
+    ensureAudio();
     gameRunning = false;
     if (raf) cancelAnimationFrame(raf);
 
@@ -504,6 +554,7 @@
       gameScreen.classList.remove("show");
       prankScreen.classList.add("show");
       initPrank();
+      showToast("😈 Try clicking NO for an extra game…", 1400);
     }, 900);
   }
 
@@ -512,19 +563,15 @@
 
     const r = gameArea.getBoundingClientRect();
     const w = 78, h = 56;
-
     const dt = Math.min(32, ts - birdState.lastTs);
     birdState.lastTs = ts;
 
-    // move
     birdState.x += birdState.vx * (dt/16);
     birdState.y += birdState.vy * (dt/16);
 
-    // wobble (makes it harder & fun)
     birdState.wobble += 0.08 * (dt/16);
     const wob = Math.sin(birdState.wobble) * 8;
 
-    // bounce edges
     const pad = 6;
     if (birdState.x < pad) { birdState.x = pad; birdState.vx *= -1; }
     if (birdState.x > r.width - w - pad) { birdState.x = r.width - w - pad; birdState.vx *= -1; }
@@ -532,30 +579,24 @@
     if (birdState.y > r.height - h - pad) { birdState.y = r.height - h - pad; birdState.vy *= -1; }
 
     bird.style.transform = `translate(${birdState.x}px, ${birdState.y + wob}px)`;
-
     raf = requestAnimationFrame(loopGame);
   }
 
   function onBirdHit(e){
-    // iPhone: prevent double tap zoom + “ghost clicks”
     e.preventDefault();
-
+    ensureAudio();
     if (!gameRunning) return;
-    hits = Math.min(5, hits + 1);
 
+    hits = Math.min(5, hits + 1);
     hitsEl.textContent = String(hits);
     progressBar.style.width = `${(hits/5)*100}%`;
 
-    // Make the bird “panic” a bit (fun)
+    sfxHit();
+
     birdState.vx = (birdState.vx > 0 ? 1 : -1) * (2.8 + hits*0.35);
     birdState.vy = (birdState.vy > 0 ? 1 : -1) * (1.6 + hits*0.28);
 
-    const line = romanticLines[rand(0, romanticLines.length-1)];
-    showToast(line, 1100);
-
-    // Little “pop”
-    bird.style.transition = "transform .08s ease";
-    setTimeout(()=>{ bird.style.transition = ""; }, 120);
+    showToast(romanticLines[rand(0, romanticLines.length-1)], 1100);
 
     if (hits >= 5){
       showToast(`💘 ${TO_NICK} unlocked it… now face the YES 😈`, 1400);
@@ -566,11 +607,9 @@
   startGameBtn.addEventListener("click", startGame);
   skipBtn.addEventListener("click", endGameAndGoToPrank);
 
-  // Bird tap handlers (touch + click)
   bird.addEventListener("touchstart", onBirdHit, {passive:false});
   bird.addEventListener("click", onBirdHit);
 
-  // Start with bird placed even before start
   window.addEventListener("resize", () => {
     if (!prankScreen.classList.contains("show")) placeBirdInitial();
   });
@@ -587,6 +626,7 @@
   const modal = document.getElementById("modal");
   const finalNote = document.getElementById("finalNote");
   const closeBtn = document.getElementById("closeBtn");
+  const shareBtn = document.getElementById("shareBtn");
 
   const messages = [
     `😇 Come on ${TO_NICK}… it’s just a tiny YES. No pressure. (Okay maybe 1% pressure.)`,
@@ -601,7 +641,6 @@
     `💘 The universe is begging you. Also me. Mostly me.`,
   ];
 
-  // Stickers as data-URIs (no extra files)
   const svgSticker = (emoji, label) => {
     const svg =
 `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220">
@@ -641,8 +680,7 @@
   }
 
   function setMessage(){
-    const idx = Math.min(chases, messages.length - 1);
-    msg.textContent = messages[idx];
+    msg.textContent = messages[Math.min(chases, messages.length - 1)];
   }
 
   function showSticker(){
@@ -673,7 +711,6 @@
     const noX = noBtn.offsetLeft + noBtn.offsetWidth / 2;
     const noY = noBtn.offsetTop  + noBtn.offsetHeight / 2;
 
-    // Keep YES comfortably visible (avoid too high top)
     const minY = Math.max(pad, Math.floor(arenaRect.height * 0.30));
     const maxY2 = Math.max(minY, Math.min(maxY, Math.floor(arenaRect.height * 0.88)));
 
@@ -685,7 +722,6 @@
       if (tries > 60) break;
     } while (dist(x + btnW/2, y + btnH/2, noX, noY) < 150);
 
-    // Positioned by center because of translate(-50%, -50%)
     yesBtn.style.left = `${x + btnW/2}px`;
     yesBtn.style.top  = `${y + btnH/2}px`;
   }
@@ -702,7 +738,8 @@
 
     setMessage();
     showSticker();
-    teleportYes(); // YES moves each chase
+    teleportYes();
+    sfxNo();
 
     const arenaRect = arena.getBoundingClientRect();
     const btnW = Math.max(noBtn.offsetWidth, 180);
@@ -712,13 +749,12 @@
     const maxX = arenaRect.width - btnW - pad;
     const maxY = arenaRect.height - btnH - pad;
 
-    // Keep NO within visible area always; avoid too close to edges
     let x, y, tries = 0;
     do{
       x = rand(pad, Math.max(pad, maxX));
       y = rand(pad, Math.max(pad, maxY));
       tries++;
-      if (tries > 60) break;
+      if (tries > 70) break;
     } while (dist(x + btnW/2, y + btnH/2, parseFloat(yesBtn.style.left||0), parseFloat(yesBtn.style.top||0)) < 140);
 
     noBtn.style.left = `${x}px`;
@@ -726,7 +762,6 @@
   }
 
   function initPrank(){
-    // Build sticker nodes once
     if (stickerNodes.length === 0){
       stickerNodes = stickers.map((s) => {
         const img = document.createElement("img");
@@ -744,14 +779,13 @@
     diffEl.textContent = "Normal";
     setMessage();
 
-    // Initial placement
     requestAnimationFrame(() => {
       teleportYes();
       teleportNo("init");
     });
   }
 
-  // iPhone: no hover. We dodge on proximity + on touch attempt.
+  // iPhone: dodge based on finger proximity
   arena.addEventListener("touchmove", (e) => {
     const t = e.touches && e.touches[0];
     if (!t) return;
@@ -767,6 +801,7 @@
   }, {passive:true});
 
   arena.addEventListener("touchstart", (e) => {
+    ensureAudio();
     const t = e.touches && e.touches[0];
     if (!t) return;
 
@@ -781,11 +816,11 @@
     if (dist(mx, my, bx, by) < diff.dodgeRadius + 10) teleportNo("near");
   }, {passive:true});
 
-  // If she actually taps NO, it jumps
   noBtn.addEventListener("touchstart", (e) => {
     e.preventDefault();
+    ensureAudio();
     teleportNo("touch");
-    showToast("😈 Nice try.", 700);
+    showToast("😈 Nice try. Almost unlocked the ‘extra game’…", 950);
   }, {passive:false});
 
   // Desktop fallback
@@ -805,6 +840,9 @@
 
   // YES click success
   yesBtn.addEventListener("click", () => {
+    ensureAudio();
+    sfxYes();
+
     const extra = chases === 0
       ? `You didn’t even chase the No button… suspiciously mature. 😌`
       : `Also: you chased the No button <b>${chases}</b> times. That’s true love cardio. 🏃‍♀️💘`;
@@ -820,6 +858,31 @@
     modal.classList.add("show");
     startConfetti();
     showToast("📸 Screenshot time 😈", 1400);
+  });
+
+  // Share button: iPhone share sheet if available, else copy link
+  shareBtn.addEventListener("click", async () => {
+    ensureAudio();
+    const url = window.location.href;
+    const text = `😂 ${TO_NICK} finally clicked YES! Send this to ${FROM_NAME}:`;
+
+    try{
+      if (navigator.share){
+        await navigator.share({ title: "Valentine Prank 💘", text, url });
+        showToast("✅ Shared!", 900);
+      } else {
+        await navigator.clipboard.writeText(url);
+        showToast("✅ Link copied! Paste it to Farah 😈", 1200);
+      }
+    } catch (err){
+      // fallback copy if share cancelled or blocked
+      try{
+        await navigator.clipboard.writeText(url);
+        showToast("✅ Link copied! Paste it to Farah 😈", 1200);
+      } catch {
+        showToast("Copy failed 😭 Just copy the URL from the address bar.", 1500);
+      }
+    }
   });
 
   closeBtn.addEventListener("click", () => {
