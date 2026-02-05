@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Will you be my Valentine? 💘</title>
+  <style>
+    :root{
+      --bg1:#ff7aa2;
+      --bg2:#ffd1dc;
+      --card:#ffffffcc;
+      --text:#1f1f1f;
+      --yes:#23c483;
+      --no:#ff4d6d;
+      --shadow: 0 20px 60px rgba(0,0,0,.18);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 10% 10%, #fff6, transparent 60%),
+        radial-gradient(900px 700px at 90% 20%, #fff4, transparent 55%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      overflow:hidden;
+    }
+    .hearts{
+      position:fixed; inset:0; pointer-events:none; opacity:.22;
+      background-image:
+        radial-gradient(circle at 20% 30%, #fff 0 2px, transparent 3px),
+        radial-gradient(circle at 80% 20%, #fff 0 2px, transparent 3px),
+        radial-gradient(circle at 70% 80%, #fff 0 2px, transparent 3px),
+        radial-gradient(circle at 40% 75%, #fff 0 2px, transparent 3px);
+      filter: blur(.2px);
+    }
+
+    .card{
+      width:min(860px, 92vw);
+      background:var(--card);
+      border:1px solid #ffffff88;
+      backdrop-filter: blur(10px);
+      border-radius:28px;
+      padding:28px 22px 18px;
+      box-shadow:var(--shadow);
+      position:relative;
+    }
+    .top{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .title{
+      font-size:clamp(26px, 3.6vw, 44px);
+      line-height:1.05;
+      margin:0;
+    }
+    .subtitle{
+      margin:10px 0 0;
+      font-size:clamp(14px, 2vw, 18px);
+      opacity:.85;
+    }
+    .badge{
+      padding:10px 14px;
+      background:#fff;
+      border-radius:999px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.08);
+      border:1px solid #00000010;
+      font-weight:700;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      user-select:none;
+    }
+    .arena{
+      margin-top:18px;
+      height:320px;
+      border-radius:22px;
+      border:1px dashed #00000025;
+      background: linear-gradient(180deg, #ffffffa8, #ffffff66);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .stickers{
+      position:absolute; inset:0;
+      pointer-events:none;
+    }
+    .sticker{
+      position:absolute;
+      width:120px;
+      height:120px;
+      transform: rotate(var(--rot, 0deg));
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.18));
+      opacity:0;
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    .sticker.show{
+      opacity:1;
+      transform: scale(1) rotate(var(--rot, 0deg));
+    }
+
+    .controls{
+      position:absolute;
+      left:0; right:0; bottom:18px;
+      display:flex;
+      justify-content:center;
+      gap:16px;
+      padding:0 16px;
+      flex-wrap:wrap;
+    }
+    button{
+      border:none;
+      padding:16px 22px;
+      border-radius:18px;
+      font-size:18px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow: 0 12px 28px rgba(0,0,0,.18);
+      transition: transform .08s ease;
+      user-select:none;
+      touch-action: manipulation;
+    }
+    button:active{transform: scale(.98)}
+    #yesBtn{
+      background: linear-gradient(180deg, #2de7a0, var(--yes));
+      color:#083a26;
+      min-width:210px;
+    }
+    #noBtn{
+      background: linear-gradient(180deg, #ff7a92, var(--no));
+      color:#3b0610;
+      min-width:180px;
+      position:absolute; /* will be placed by JS within arena */
+      left:60%;
+      top:55%;
+    }
+
+    .status{
+      margin:16px 4px 0;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      font-size:15px;
+      opacity:.9;
+    }
+    .status b{opacity:1}
+    .msg{
+      margin-top:10px;
+      padding:12px 14px;
+      border-radius:14px;
+      background:#ffffffb3;
+      border:1px solid #00000010;
+      box-shadow: 0 10px 22px rgba(0,0,0,.06);
+      min-height:48px;
+    }
+
+    /* Modal */
+    .modal{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.45);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:50;
+    }
+    .modal.show{display:flex}
+    .modalCard{
+      width:min(720px, 96vw);
+      background:#fff;
+      border-radius:26px;
+      box-shadow: 0 25px 90px rgba(0,0,0,.35);
+      padding:22px;
+      position:relative;
+      overflow:hidden;
+    }
+    .modalCard h2{
+      margin:0;
+      font-size:clamp(24px, 3.5vw, 40px);
+    }
+    .modalCard p{
+      font-size:18px;
+      line-height:1.35;
+      margin:10px 0 0;
+    }
+    .kiss{
+      font-size:44px;
+      margin-top:10px;
+    }
+    .closeRow{
+      margin-top:16px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .secondary{
+      background:#111;
+      color:#fff;
+      box-shadow: 0 12px 26px rgba(0,0,0,.20);
+    }
+
+    /* Confetti canvas */
+    #confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:60;
+    }
+
+    /* Small footer */
+    .footer{
+      margin-top:14px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-size:12px;
+      opacity:.7;
+      flex-wrap:wrap;
+    }
+    .hint{
+      opacity:.8;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="confetti"></canvas>
+  <div class="hearts"></div>
+
+  <div class="card">
+    <div class="top">
+      <div>
+        <h1 class="title">Katia (aka Katkoot)… 💘<br>Will you be my Valentine?</h1>
+        <p class="subtitle">From <b>Farah</b> — please choose wisely. (Your “No” has legs today.)</p>
+      </div>
+      <div class="badge" title="Chase counter">
+        🏃‍♀️💨 <span>No-chases:</span> <span id="chaseCount">0</span>
+      </div>
+    </div>
+
+    <div class="arena" id="arena">
+      <div class="stickers" id="stickers"></div>
+
+      <div class="controls">
+        <button id="yesBtn">YES 💍💖</button>
+        <button id="noBtn">No 🙅‍♀️</button>
+      </div>
+    </div>
+
+    <div class="status">
+      <div>Difficulty: <b id="difficulty">Normal</b></div>
+      <div class="hint">Hint: the “No” button is in ✨sport mode✨</div>
+    </div>
+
+    <div class="msg" id="msg">
+      😇 Come on Katkoot… it’s just a tiny YES. No pressure. (Okay maybe 1% pressure.)
+    </div>
+
+    <div class="footer">
+      <div>Made with suspicious love by <b>Farah</b> ❤️</div>
+      <div>Tip: works best on desktop… but still evil on mobile 😈</div>
+    </div>
+  </div>
+
+  <!-- YES modal -->
+  <div class="modal" id="modal">
+    <div class="modalCard">
+      <h2>LET’S GOOOOOO 💘</h2>
+      <p id="finalNote"></p>
+      <div class="kiss">😘💞🥰</div>
+      <div class="closeRow">
+        <button class="secondary" id="closeBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // ========= Custom names =========
+  const FROM_NAME = "Farah";
+  const TO_NAME_1 = "Katia";
+  const TO_NICK = "Katkoot";
+
+  // ========= Elements =========
+  const arena = document.getElementById("arena");
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+  const msg = document.getElementById("msg");
+  const chaseCountEl = document.getElementById("chaseCount");
+  const diffEl = document.getElementById("difficulty");
+  const stickersEl = document.getElementById("stickers");
+  const modal = document.getElementById("modal");
+  const finalNote = document.getElementById("finalNote");
+  const closeBtn = document.getElementById("closeBtn");
+
+  // ========= Funny messages =========
+  const messages = [
+    `😇 Come on ${TO_NICK}… it’s just a tiny YES. No pressure. (Okay maybe 1% pressure.)`,
+    `😏 The “No” button said: “Catch me if you can, ${TO_NAME_1}.”`,
+    `🏃‍♀️💨 Plot twist: “No” is training for the Olympics.`,
+    `😈 ${FROM_NAME} installed anti-No technology. It’s… working.`,
+    `😂 The “No” button is basically: *404: Confidence not found*`,
+    `🧠 Strategy tip: Try approaching from the left. (The No button can smell fear.)`,
+    `🥷 The “No” button activated stealth mode.`,
+    `😵‍💫 ${TO_NICK}, at this point you’re doing cardio for love.`,
+    `🤝 Deal: click YES and I’ll pretend this never happened.`,
+    `💘 The universe is begging you. Also me. Mostly me.`,
+  ];
+
+  // ========= Built-in "pictures" (SVG stickers) =========
+  // These are data URIs, so it works offline + on GitHub Pages without extra files.
+  const svgSticker = (emoji, label) => {
+    const svg =
+`<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#ffe3ee"/>
+    </linearGradient>
+  </defs>
+  <rect x="10" y="10" width="200" height="200" rx="34" fill="url(#g)" stroke="#00000022" stroke-width="4"/>
+  <text x="110" y="115" text-anchor="middle" dominant-baseline="middle" font-size="88">${emoji}</text>
+  <text x="110" y="175" text-anchor="middle" font-family="ui-sans-serif,system-ui,Segoe UI" font-size="18" font-weight="800" fill="#111">${label}</text>
+</svg>`;
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  };
+
+  const stickers = [
+    { src: svgSticker("🫶", "LOVE DETECTED"), label: "Love detected" },
+    { src: svgSticker("😂", "NOPE RUNNING"), label: "Nope running" },
+    { src: svgSticker("🏃‍♀️", "CARDIO MODE"), label: "Cardio mode" },
+    { src: svgSticker("🥷", "STEALTH NO"), label: "Stealth no" },
+    { src: svgSticker("💘", "JUST SAY YES"), label: "Just say yes" },
+    { src: svgSticker("😈", "FARAH'S PLAN"), label: "Farah’s plan" },
+    { src: svgSticker("🧠", "TRY HARDER"), label: "Try harder" },
+    { src: svgSticker("🐣", "CUTENESS"), label: "Cuteness overload" },
+    { src: svgSticker("🍫", "BRIBE?"), label: "Bribe incoming" },
+  ];
+
+  // Create sticker elements once
+  const stickerNodes = stickers.map((s, i) => {
+    const img = document.createElement("img");
+    img.className = "sticker";
+    img.src = s.src;
+    img.alt = s.label;
+    img.style.setProperty("--rot", `${rand(-18, 18)}deg`);
+    stickersEl.appendChild(img);
+    return img;
+  });
+
+  // ========= Chase logic =========
+  let chases = 0;
+  let lastTeleport = 0;
+
+  // difficulty ramps up after some chases
+  function getDifficulty(){
+    if (chases < 4) return { name:"Normal", dodgeRadius: 90, cooldown: 80 };
+    if (chases < 8) return { name:"Spicy", dodgeRadius: 120, cooldown: 60 };
+    return { name:"Demon Mode", dodgeRadius: 160, cooldown: 45 };
+  }
+
+  function setMessage(){
+    const idx = Math.min(chases, messages.length - 1);
+    msg.textContent = messages[idx];
+  }
+
+  function showSticker(){
+    // show a new sticker every 1-2 chases
+    const index = Math.min(Math.floor(chases / 1.5), stickerNodes.length - 1);
+    const node = stickerNodes[index];
+    if (!node) return;
+
+    // random placement inside arena
+    const pad = 10;
+    const w = 120, h = 120;
+    const rect = arena.getBoundingClientRect();
+    const maxX = rect.width - w - pad;
+    const maxY = rect.height - h - pad;
+
+    node.style.left = `${rand(pad, Math.max(pad, maxX))}px`;
+    node.style.top  = `${rand(pad, Math.max(pad, maxY))}px`;
+    node.classList.add("show");
+
+    // tiny pop animation
+    node.style.transform = `scale(${1}) rotate(${rand(-15,15)}deg)`;
+  }
+
+  function teleportNo(reason=""){
+    const now = performance.now();
+    const diff = getDifficulty();
+    if (now - lastTeleport < diff.cooldown) return;
+    lastTeleport = now;
+
+    chases++;
+    chaseCountEl.textContent = String(chases);
+    setMessage();
+    showSticker();
+
+    diffEl.textContent = diff.name;
+
+    // Move NO button to random safe spot within arena
+    const arenaRect = arena.getBoundingClientRect();
+
+    // measure button (can be 0 at first paint; fallback sizes)
+    const btnW = Math.max(noBtn.offsetWidth, 160);
+    const btnH = Math.max(noBtn.offsetHeight, 52);
+
+    const pad = 18;
+    const maxX = arenaRect.width - btnW - pad;
+    const maxY = arenaRect.height - btnH - pad;
+
+    // prevent it from spawning too close to YES
+    const yesRect = yesBtn.getBoundingClientRect();
+    const yesX = yesRect.left - arenaRect.left + yesRect.width / 2;
+    const yesY = yesRect.top  - arenaRect.top  + yesRect.height / 2;
+
+    let x, y, tries = 0;
+    do {
+      x = rand(pad, Math.max(pad, maxX));
+      y = rand(pad, Math.max(pad, maxY));
+      tries++;
+      if (tries > 30) break;
+    } while (dist(x + btnW/2, y + btnH/2, yesX, yesY) < 120);
+
+    noBtn.style.left = `${x}px`;
+    noBtn.style.top  = `${y}px`;
+  }
+
+  // Hover triggers teleport
+  noBtn.addEventListener("mouseenter", () => teleportNo("hover"));
+
+  // Proximity dodge (mouse near the NO button)
+  arena.addEventListener("mousemove", (e) => {
+    const diff = getDifficulty();
+    const rect = arena.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    const bx = noBtn.offsetLeft + noBtn.offsetWidth / 2;
+    const by = noBtn.offsetTop  + noBtn.offsetHeight / 2;
+
+    if (dist(mx, my, bx, by) < diff.dodgeRadius) {
+      teleportNo("near");
+    }
+  });
+
+  // Mobile: if they try to tap NO, it jumps
+  noBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    teleportNo("touch");
+  }, { passive:false });
+
+  // YES button success
+  yesBtn.addEventListener("click", () => {
+    const extra = chases === 0
+      ? `You didn’t even chase the No button… suspiciously mature. 😌`
+      : `Also: you chased the No button <b>${chases}</b> times. That’s true love cardio. 🏃‍♀️💘`;
+
+    finalNote.innerHTML =
+      `Dear <b>${TO_NAME_1}</b> / <b>${TO_NICK}</b>,<br><br>
+      THANK YOU for clicking <b>YES</b> 😭💖<br>
+      I officially declare you my Valentine (and the winner of this very serious competition).<br><br>
+      ${extra}<br><br>
+      Love,<br><b>${FROM_NAME}</b> ❤️`;
+
+    modal.classList.add("show");
+    startConfetti();
+  });
+
+  closeBtn.addEventListener("click", () => {
+    modal.classList.remove("show");
+    stopConfetti();
+  });
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.remove("show");
+      stopConfetti();
+    }
+  });
+
+  // Initial placement
+  requestAnimationFrame(() => teleportNo("init"));
+  setMessage();
+
+  // ========= Helpers =========
+  function rand(min, max){
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  function dist(x1,y1,x2,y2){
+    const dx=x1-x2, dy=y1-y2;
+    return Math.hypot(dx,dy);
+  }
+
+  // ========= Confetti (simple canvas) =========
+  const canvas = document.getElementById("confetti");
+  const ctx = canvas.getContext("2d");
+  let confettiOn = false;
+  let particles = [];
+  let rafId = null;
+
+  function resize(){
+    canvas.width = window.innerWidth * devicePixelRatio;
+    canvas.height = window.innerHeight * devicePixelRatio;
+    canvas.style.width = window.innerWidth + "px";
+    canvas.style.height = window.innerHeight + "px";
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  function startConfetti(){
+    confettiOn = true;
+    particles = Array.from({length: 220}, () => ({
+      x: Math.random() * window.innerWidth,
+      y: -20 - Math.random() * window.innerHeight,
+      r: 4 + Math.random() * 6,
+      vx: -2 + Math.random() * 4,
+      vy: 2 + Math.random() * 5,
+      rot: Math.random() * Math.PI,
+      vr: -0.2 + Math.random() * 0.4,
+      // no fixed colors requested; random HSL each frame for variety
+      hue: Math.random() * 360
+    }));
+    if (!rafId) loop();
+  }
+
+  function stopConfetti(){
+    confettiOn = false;
+    particles = [];
+    if (rafId){
+      cancelAnimationFrame(rafId);
+      rafId = null;
+      ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+    }
+  }
+
+  function loop(){
+    rafId = requestAnimationFrame(loop);
+    ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+
+    for (const p of particles){
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+
+      // wrap / respawn
+      if (p.y > window.innerHeight + 30){
+        p.y = -20;
+        p.x = Math.random() * window.innerWidth;
+      }
+      if (p.x < -30) p.x = window.innerWidth + 30;
+      if (p.x > window.innerWidth + 30) p.x = -30;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = `hsl(${p.hue}, 90%, 60%)`;
+      // draw a little rectangle confetti piece
+      ctx.fillRect(-p.r, -p.r/2, p.r*2, p.r);
+      ctx.restore();
+    }
+
+    if (!confettiOn) stopConfetti();
+  }
+})();
+</script>
+</body>
+</html>
